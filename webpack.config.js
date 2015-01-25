@@ -5,7 +5,7 @@ module.exports = {
 
   // Entry points to bundles to be created
   entry: {
-    app: './app/scripts/app.js',
+    app: './client/scripts/app.js',
     core: [
       'jquery',
       'lodash',
@@ -35,7 +35,8 @@ module.exports = {
 
     // try to locate modules on these paths
     modulesDirectories: [
-      'app/scripts',
+      'client/scripts',
+      'client/scripts/modules',
       '.tmp/scripts',
       'web_modules',
       'bower_components',

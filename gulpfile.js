@@ -46,7 +46,7 @@ var DevWebpackCompiler = (function() {
 
 // Lint Javascript
 gulp.task('jshint', function () {
-  return gulp.src(['app/scripts/**/*.js', '!app/scripts/vendor/**/*.js'])
+  return gulp.src(['client/scripts/**/*.js', '!client/scripts/vendor/**/*.js'])
     .pipe($.jshint({ lookup: true }))
     .pipe($.jshint.reporter('jshint-stylish'))
     .pipe($.jshint.reporter('fail'));
@@ -54,7 +54,7 @@ gulp.task('jshint', function () {
 
 // Optimize images
 gulp.task('images', function () {
-  return gulp.src('app/images/**/*')
+  return gulp.src('client/images/**/*')
     .pipe($.cache($.imagemin({
       progressive: true,
       interlaced: true
@@ -65,7 +65,7 @@ gulp.task('images', function () {
 
 // Copy web fonts to dist
 gulp.task('fonts', function () {
-  return gulp.src(require('main-bower-files')().concat(['app/{,styles/}fonts/**/*']))
+  return gulp.src(require('main-bower-files')().concat(['client/{,styles/}fonts/**/*']))
     .pipe($.filter('**/*.{eot,svg,ttf,woff}'))
     .pipe($.flatten())
     .pipe(gulp.dest('dist/fonts'));
@@ -73,7 +73,7 @@ gulp.task('fonts', function () {
 
 // Compile and automatically prefix stylesheets
 gulp.task('styles', function () {
-  return gulp.src('app/styles/main.less')
+  return gulp.src('client/styles/main.less')
     .pipe($.changed('styles', {extension: '.less'}))
     .pipe($.less())
     .pipe($.autoprefixer({browsers: AUTOPREFIXER_BROWSERS}))
@@ -87,9 +87,9 @@ gulp.task('html', ['styles'], function () {
   var cssChannel = lazypipe()
     .pipe(minifyCSS)
     .pipe($.replace, /'fonts\/glyphicons[.a-z]*/g, '\'../fonts')
-  var assets = $.useref.assets({searchPath: '{.tmp,app}'});
+  var assets = $.useref.assets({searchPath: '{.tmp,client}'});
 
-  return gulp.src('app/*.html')
+  return gulp.src('client/*.html')
     .pipe(assets)
     // Concatenate and minify JavaScript
     .pipe($.if('*.js', $.uglify()))
@@ -119,11 +119,11 @@ gulp.task('connect', ['styles'], function () {
     .use(DevWebpackCompiler.getWebpack())
     .use(require('connect-livereload')({port: 35729}))
     .use(serveStatic('.tmp'))
-    .use(serveStatic('app'))
+    .use(serveStatic('client'))
     // paths to bower_components should be relative to the current file
-    // e.g. in app/index.html you should use ../bower_components
+    // e.g. in client/index.html you should use ../bower_components
     .use('/bower_components', serveStatic('bower_components'))
-    .use(serveIndex('app'));
+    .use(serveIndex('client'));
 
   require('http').createServer(app)
     .listen(9000)
@@ -135,7 +135,7 @@ gulp.task('connect', ['styles'], function () {
 // Minify and compile handlebars templates
 // Handlebars can be loaded with a Webpack loader but without minification
 gulp.task('templates', function () {
-  return gulp.src('app/scripts/**/*.hbs')
+  return gulp.src('client/scripts/**/*.hbs')
     .pipe($.minifyHtml())
     .pipe($.handlebars())
     .pipe($.defineModule('commonjs'))
@@ -154,8 +154,8 @@ gulp.task('webpack', ['templates'], function(callback) {
 // Copy assets to distribution path
 gulp.task('extras', function () {
   return gulp.src([
-    'app/*.*',
-    '!app/*.html',
+    'client/*.*',
+    '!client/*.html',
     'node_modules/apache-server-configs/dist/.htaccess'
   ], {
     dot: true
@@ -167,18 +167,18 @@ gulp.task('webpack:build', ['templates'], function(callback) {
   var conf = Object.create(webpackConfig);
 
   conf.plugins = conf.plugins.concat(
-		new webpack.optimize.DedupePlugin(),
-		new webpack.optimize.UglifyJsPlugin()
-	);
+        new webpack.optimize.DedupePlugin(),
+        new webpack.optimize.UglifyJsPlugin()
+    );
 
   // run webpack
-	webpack(conf, function(err, stats) {
-		if(err) throw new $.util.PluginError("webpack:build", err);
-		$.util.log("[webpack:build]", stats.toString({
-			colors: true
-		}));
-		callback();
-	});
+    webpack(conf, function(err, stats) {
+        if(err) throw new $.util.PluginError("webpack:build", err);
+        $.util.log("[webpack:build]", stats.toString({
+            colors: true
+        }));
+        callback();
+    });
 });
 
 // Run karma for development, will watch and reload
@@ -212,15 +212,15 @@ gulp.task('watch', ['connect'], function () {
 
   // watch for changes
   gulp.watch([
-    'app/*.html',
+    'client/*.html',
     '.tmp/styles/**/*.css',
     '.tmp/scripts/**/*.js',
-    'app/images/**/*'
+    'client/images/**/*'
   ]).on('change', $.livereload.changed);
 
-  gulp.watch('app/scripts/**/*.js', ['webpack']);
-  gulp.watch('app/scripts/**/*.hbs', ['webpack']);
-  gulp.watch('app/styles/**/*.less', ['styles']);
+  gulp.watch('client/scripts/**/*.js', ['webpack']);
+  gulp.watch('client/scripts/**/*.hbs', ['webpack']);
+  gulp.watch('client/styles/**/*.less', ['styles']);
 });
 
 // Build the project for distribution
