@@ -1,3 +1,5 @@
 module.exports = {
-    ldap: 'ldap.forumsys.com:389'
+    //server port
+    port: 8080,
+    ldap: 'ldap.server.com:398'
 };

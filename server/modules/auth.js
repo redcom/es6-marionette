@@ -1,44 +1,29 @@
-var LDAPStrategy = require('passport-ldapauth').Strategy;
+var LdapStrategy = require('passport-ldapauth').Strategy;
 
 // LDAP  Config
 var ldapConfig = {
-    server: {
+    server: {: 389
         url: 'ldap://' + global.config.ldap,
-        bindDn: 'cn=read-only-admin,ou=mathematicians,dc=example,dc=com',
-        bindCredentials: 'password',
-        searchBase: 'ou=mathematicians,dc=example,dc=com',
+        searchBase: 'o=gr',
         searchFilter: '(uid={{username}})'
-    }
-    /*
-    ,
-     *usernameField: 'username',
-     *passwordField: 'password'
-     */
+    },
 };
 
-module.exports = function(app, passport) {
+module.exports = function(passport) {
 
-    passport.use(new LDAPStrategy(
-        ldapConfig,
+    passport.use(new LdapStrategy(ldapConfig,
         function(profile, done) {
-            console.log("aaaaaaaaaaaaaaaaa");
-            console.log("aaaaaaaaaaaaaaaaa");
-            console.log("aaaaaaaaaaaaaaaaa");
-            console.log("aaaaaaaaaaaaaaaaa");
-            console.log("aaaaaaaaaaaaaaaaa");
             return done(null, profile);
         }
     ));
 
     passport.serializeUser(function(user, done) {
+        // this  sill save the user in session
         done(null, user);
     });
 
     passport.deserializeUser(function(user, done) {
+        // this will get the user from session
         done(null, user);
     });
-
-    app.use(passport.initialize());
-    app.use(passport.session());
-
 };

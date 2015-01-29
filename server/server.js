@@ -8,7 +8,8 @@ var express = require('express'),
 
 global.config = config;
 
-var auth = require('./modules/auth')(app, passport);
+var auth = require('./modules/auth')(passport);
+console.log(auth);
 
 app.use(session({
     secret: 'es6',
@@ -19,23 +20,25 @@ app.use(session({
 // provide req.body
 app.use(multer());
 
+// initialize passport
+app.use(passport.initialize());
+app.use(passport.session());
+
+
+app.get('/', function(req,res,next) { console.log(req.session.passport); return next(); });
+
 app.get('/api', function(req, res) {
     res.end("api");
 });
+app.get('/api/auth', function(req, res) {
+    res.end('Error login');
+});
 
-app.post('/auth',
-    passport.authenticate('ldapauth', {
-        badRequestMessage: 'bad reg',
-        invalidCredentials: 'invalid',
-        userNotFound: 'not found',
-        session: false
-    }),
-    function(req, res, next) {
-        res.send({
-            status: 'ok'
-        });
-    }
-);
+app.post('/api/auth', passport.authenticate('ldapauth', {
+    successRedirect: '/',
+    failureRedirect: '/auth',
+    session: true
+}));
 
 
 app.set('port', config.port | 8080);

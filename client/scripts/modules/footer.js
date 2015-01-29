@@ -3,7 +3,7 @@ import footerTemplate from 'templates/footer';
 
 export default class Footer extends Marionette.ItemView {
   constructor(...rest) {
-    super(...rest);
     this.template = footerTemplate;
+    super(...rest);
   }
 }

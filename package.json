@@ -9,7 +9,6 @@
     "express-session": "^1.10.1",
     "lodash": "^2.4.1",
     "multer": "^0.1.7",
-    "nodemon": "^1.3.2",
     "passport": "^0.2.1",
     "passport-ldapauth": "^0.2.3"
   },
@@ -61,7 +60,9 @@
     "lazypipe": "^0.2.2",
     "main-bower-files": "^2.5.0",
     "mocha": "^2.1.0",
+    "nodemon": "^1.3.2",
     "opn": "^1.0.1",
+    "proxy-middleware": "^0.9.0",
     "serve-index": "^1.6.0",
     "serve-static": "^1.8.0",
     "sinon": "^1.12.2",
